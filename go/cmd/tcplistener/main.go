@@ -56,6 +56,8 @@ func getLinesChannel(file io.ReadCloser) <-chan string {
 			_, err := file.Read(fileContents)
 
 			if err == io.EOF {
+				lineValue := strings.Join(lineContents, "")
+				lineChannel <- lineValue
 				close(lineChannel)
 				break
 			}
@@ -65,11 +67,11 @@ func getLinesChannel(file io.ReadCloser) <-chan string {
 
 			if len(parts) == 1 {
 				continue
-			} else {
-				lineValue := strings.Join(lineContents, "")
-				lineChannel <- lineValue
-				lineContents = []string{parts[1]}
 			}
+
+			lineValue := strings.Join(lineContents, "")
+			lineChannel <- lineValue
+			lineContents = []string{parts[1]}
 		}
 	}()
 
